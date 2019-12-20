@@ -49,9 +49,9 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div style="position:relative">
-        <div class="tips">
+        <!-- <div class="tips">
           <a href="javascript:;" @click="showDialog = true">立即注册</a>
-        </div>
+        </div> -->
 
         <!-- <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
           Or connect with

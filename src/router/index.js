@@ -183,6 +183,39 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/setting',
+    component: Layout,
+    redirect: '/setting/index',
+    alwaysShow: true, // will always show the root menu
+    name: 'setting',
+    meta: {
+      title: '用户设置',
+      icon: 'user',
+      // roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'page',
+        component: () => import('@/views/setting/personalSetting'),
+        name: 'personalSetting',
+        meta: {
+          title: '个人设置',
+          roles: ['other'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'setUsers',
+        component: () => import('@/views/setting/setUsers'),
+        name: 'setUsers',
+        meta: {
+          title: '用户管理',
+          roles: ['admin']
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+    ]
+  },
 
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
