@@ -75,10 +75,10 @@
       </el-table-column>
       <el-table-column
         align="center"
-        label="角色权限"
+        label="角色"
       >
         <template slot-scope="scope">
-          <el-tag v-for="(item, index) in scope.row.roles" :key="index" size="medium" style="margin-right: 5px;">{{ item.name }}</el-tag>
+          <el-tag v-for="(item, index) in scope.row.roles" :key="index" size="medium" style="margin-right: 5px;">{{ item.desc }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">

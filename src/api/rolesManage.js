@@ -15,3 +15,19 @@ export function updateRole(data) {
     data
   })
 }
+
+export function createRole(data) {
+  return request({
+    url: '/role/create',
+    method: 'post',
+    data
+  })
+}
+
+export function destroyRole(id) {
+  return request({
+    url: '/role/destroy',
+    method: 'get',
+    params: { id }
+  })
+}

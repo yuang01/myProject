@@ -218,7 +218,7 @@ export const asyncRoutes = [
         component: () => import('@/views/setting/rolesManage'),
         name: 'rolesManage',
         meta: {
-          title: '权限管理',
+          title: '角色管理',
           roles: ['admin']
         }
       },

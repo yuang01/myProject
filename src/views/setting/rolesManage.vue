@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+    <el-button type="primary" class="mb-10" @click="addRole">新增角色</el-button>
     <el-table
       :data="tableData"
       style="width: 100%">
@@ -35,6 +36,7 @@
           <el-button
             size="mini"
             type="danger"
+            :disabled="scope.row.name.includes('admin')"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
         </template>
@@ -59,7 +61,7 @@
 </template>
 
 <script>
-import { getRoles, updateRole } from '@/api/rolesManage';
+import { getRoles, updateRole, createRole, destroyRole } from '@/api/rolesManage';
 export default {
   name: 'rolesManage',
   data() {
@@ -95,7 +97,26 @@ export default {
       this.dialogRoleEditorAddFormVisible = this.isEdit = true;
     },
     handleDelete(index, row) {
-
+      this.$confirm('是否删除该角色?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        destroyRole(row.id).then(res => {
+          if (res.data.code === 200) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getRoles()
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     handleUpdateorAddRole(formName) {
       if (this.isEdit) {
@@ -120,10 +141,28 @@ export default {
       });
     },
     handleAddRole(formName) {
-
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          createRole(this.roleForm).then(res => {
+            console.log('code', res.data.code);
+            if (res.data.code === 200) {
+              this.$message.success(res.data.message);
+              this.dialogRoleEditorAddFormVisible = false;
+              this.getRoles();
+            } else {
+              this.$message.error(res.data.message)
+            }
+          });
+        }
+      });
     },
     handleCancel() {
       this.dialogRoleEditorAddFormVisible = false;
+    },
+    addRole() {
+      this.isEdit = false;
+      Object.assign(this.roleForm, this.$options.data().roleForm) // 数据恢复魏data中的初始值
+      this.dialogRoleEditorAddFormVisible = true;
     }
   }
 }
