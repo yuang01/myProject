@@ -32,6 +32,9 @@ if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
 
+import permission from '@/directive/permission/index.js' // 权限判断指令
+Vue.directive('permission', permission);
+
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })

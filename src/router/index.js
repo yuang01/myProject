@@ -219,7 +219,7 @@ export const asyncRoutes = [
         name: 'rolesManage',
         meta: {
           title: '角色管理',
-          roles: ['admin']
+          roles: ['admin', 'other']
         }
       },
       {

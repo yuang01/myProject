@@ -31,11 +31,13 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
+            v-permission="['admin']"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
           <el-button
             size="mini"
             type="danger"
+            v-permission="['admin']"
             :disabled="scope.row.name.includes('admin')"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
@@ -144,7 +146,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           createRole(this.roleForm).then(res => {
-            console.log('code', res.data.code);
             if (res.data.code === 200) {
               this.$message.success(res.data.message);
               this.dialogRoleEditorAddFormVisible = false;
