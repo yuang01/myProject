@@ -211,7 +211,6 @@ export const asyncRoutes = [
         meta: {
           title: '用户管理',
           roles: ['admin']
-          // if do not set roles, means: this page does not require permission
         }
       },
       {
@@ -221,7 +220,15 @@ export const asyncRoutes = [
         meta: {
           title: '权限管理',
           roles: ['admin']
-          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'departmentManage',
+        component: () => import('@/views/setting/departmentManage'),
+        name: 'departmentManage',
+        meta: {
+          title: '部门管理',
+          roles: ['admin']
         }
       },
     ]

@@ -26,27 +26,104 @@
           <span v-else>--</span>
         </template>
       </el-table-column>
+      <el-table-column label="操作" align="center">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)"
+          >编辑</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+          >删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
+
+    <el-dialog :title="isEdit ? '编辑角色' : '新增角色'" :visible.sync="dialogRoleEditorAddFormVisible" :close-on-click-modal="false">
+      <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="100px" class="demo-roleForm">
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="roleForm.name" />
+        </el-form-item>
+        <el-form-item label="描述" prop="desc">
+          <el-input v-model="roleForm.desc" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleCancel()">取 消</el-button>
+        <el-button type="primary" @click="handleUpdateorAddRole('roleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getRoutes } from '@/api/rolesManage';
+import { getRoles, updateRole } from '@/api/rolesManage';
 export default {
   name: 'rolesManage',
   data() {
     return {
-      tableData: []
+      tableData: [],
+      roleForm: {
+        name: '',
+        desc: ''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
+        ],
+        desc: [
+          { required: true, message: '请输入描述', trigger: 'blur' },
+        ],
+      },
+      dialogRoleEditorAddFormVisible: false,
+      isEdit: false,
     }
   },
   created() {
-    this.getRoutes();
+    this.getRoles();
   },
   methods: {
-    async getRoutes() {
-      const result = await getRoutes();
+    async getRoles() {
+      const result = await getRoles();
       this.tableData = result.data.data;
-      console.log('result', result);
+    },
+    handleEdit(index, row) {
+      const role = Object.assign({}, row);
+      this.roleForm = role;
+      this.dialogRoleEditorAddFormVisible = this.isEdit = true;
+    },
+    handleDelete(index, row) {
+
+    },
+    handleUpdateorAddRole(formName) {
+      if (this.isEdit) {
+        this.handleUpdateRole(formName);
+      } else {
+        this.handleAddRole(formName);
+      }
+    },
+    handleUpdateRole(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          updateRole(this.roleForm).then(res => {
+            if (res.data.code === 200) {
+              this.$message.success(res.data.message);
+              this.dialogRoleEditorAddFormVisible = false;
+              this.getRoles();
+            } else {
+              this.$message.error(res.data.message)
+            }
+          });
+        }
+      });
+    },
+    handleAddRole(formName) {
+
+    },
+    handleCancel() {
+      this.dialogRoleEditorAddFormVisible = false;
     }
   }
 }
