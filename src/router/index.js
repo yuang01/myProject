@@ -214,6 +214,16 @@ export const asyncRoutes = [
           // if do not set roles, means: this page does not require permission
         }
       },
+      {
+        path: 'rolesManage',
+        component: () => import('@/views/setting/rolesManage'),
+        name: 'rolesManage',
+        meta: {
+          title: '权限管理',
+          roles: ['admin']
+          // if do not set roles, means: this page does not require permission
+        }
+      },
     ]
   },
 

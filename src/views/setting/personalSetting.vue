@@ -40,6 +40,7 @@
 
 <script>
 import { updateUser } from '@/api/user'
+import { Base64 } from 'js-base64';
 export default {
   name: 'PersonalSetting', // 个人设置页面
   data() {
@@ -71,6 +72,12 @@ export default {
   },
   created() {
     this.getCurUser()
+    const encode = Base64.encode('dankogai');
+    console.log('encode', encode);
+    const decode = Base64.decode('ZGFua29nYWk=');
+    console.log('decode', decode);
+    const aa = new Buffer('dankogai').toString('base64');
+    console.log('aa', aa);
   },
   methods: {
     // 获取用户
