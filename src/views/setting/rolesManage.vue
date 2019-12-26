@@ -54,6 +54,15 @@
           <el-input v-model="roleForm.desc" />
         </el-form-item>
       </el-form>
+      <el-tree
+        :data="menusData"
+        show-checkbox
+        node-key="id"
+        :props="defaultProps"
+        ref="tree"
+        :default-checked-keys="defaultCheckKeys"
+        @check-change="handleNodeClick">
+      </el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel()">取 消</el-button>
         <el-button type="primary" @click="handleUpdateorAddRole('roleForm')">确 定</el-button>
@@ -63,6 +72,7 @@
 </template>
 
 <script>
+import { getMenus, getMenusByRoleId } from '@/api/menus';
 import { getRoles, updateRole, createRole, destroyRole } from '@/api/rolesManage';
 export default {
   name: 'rolesManage',
@@ -83,6 +93,12 @@ export default {
       },
       dialogRoleEditorAddFormVisible: false,
       isEdit: false,
+      menusData: [],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      defaultCheckKeys: []
     }
   },
   created() {
@@ -97,6 +113,22 @@ export default {
       const role = Object.assign({}, row);
       this.roleForm = role;
       this.dialogRoleEditorAddFormVisible = this.isEdit = true;
+      this.getMenus(); // 得到所有的菜单
+      this.getCheckMenusByRoleId(row.id); // 得到当前激活的菜单
+    },
+    handleNodeClick(data) {
+      console.log(data);
+    },
+    getMenus() {
+      getMenus().then(res => {
+        console.log('res', res);
+        this.menusData = res.data.data;
+      })
+    },
+    getCheckMenusByRoleId(id) {
+      getMenusByRoleId(id).then(res => {
+        this.defaultCheckKeys = res.data.data;
+      })
     },
     handleDelete(index, row) {
       this.$confirm('是否删除该角色?', '提示', {
@@ -128,9 +160,19 @@ export default {
       }
     },
     handleUpdateRole(formName) {
+      // console.log('menu', this.menusData);
+      // console.log('key', this.defaultCheckKeys);
+      // console.log('22',this.$refs.tree.getCheckedKeys());
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          updateRole(this.roleForm).then(res => {
+          const checkMenus = this.$refs.tree.getCheckedKeys();
+          const data = {
+            id: this.roleForm.id,
+            name: this.roleForm.name,
+            desc: this.roleForm.desc,
+            checkMenus
+          }
+          updateRole(data).then(res => {
             if (res.data.code === 200) {
               this.$message.success(res.data.message);
               this.dialogRoleEditorAddFormVisible = false;
