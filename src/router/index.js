@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
 Vue.use(Router)
 
 /* Layout */
@@ -436,6 +435,17 @@ export const asyncRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
+
+export const componentMap = 
+  {
+    Layout,
+    exportExcel: () => import('@/views/excel/export-excel'),
+    selectExcel: () => import('@/views/excel/select-excel'),
+    personalSetting: () => import('@/views/setting/personalSetting'),
+    setUsers: () => import('@/views/setting/setUsers'),
+    rolesManage: () => import('@/views/setting/rolesManage'),
+    departmentManage: () => import('@/views/setting/departmentManage'),
+  }
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

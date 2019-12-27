@@ -1,5 +1,5 @@
-import { asyncRoutes, constantRoutes } from '@/router'
-
+import { asyncRoutes, constantRoutes, componentMap } from '@/router'
+import { getMenusByRoleName } from '@/api/menus'
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
@@ -33,6 +33,16 @@ export function filterAsyncRoutes(routes, roles) {
 
   return res
 }
+// 将后端返回的conponent替换掉，根据映射
+export function filterServiceTreeMenus(data) {
+  data.forEach(el => {
+    el.component = componentMap[el.component];
+    if (el.children) {
+      filterServiceTreeMenus(el.children);
+    }
+  });
+  return data;
+}
 
 const state = {
   routes: [],
@@ -49,14 +59,25 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      const params = {
+        name: roles[0]
+      };
+      let menus = [];
+      getMenusByRoleName(params).then(res => {
+        menus = filterServiceTreeMenus(res.data.data);
+        menus.push({ path: '*', redirect: '/404', hidden: true });
+      }).then(() => {
+        commit('SET_ROUTES', menus)
+        resolve(menus)
+      })
+      // let accessedRoutes
+      // if (roles.includes('admin')) {
+      //   accessedRoutes = asyncRoutes || []
+      // } else {
+      //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      // }
+      // commit('SET_ROUTES', accessedRoutes)
+      // resolve(accessedRoutes)
     })
   }
 }

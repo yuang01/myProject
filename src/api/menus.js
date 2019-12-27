@@ -14,3 +14,11 @@ export function getMenus() {
     method: 'get',
   })
 }
+
+export function getMenusByRoleName(params) {
+  return request({
+    url: '/menu/getMenusByRoleName',
+    method: 'get',
+    params
+  })
+}

@@ -113,13 +113,12 @@ export default {
       const role = Object.assign({}, row);
       this.roleForm = role;
       this.dialogRoleEditorAddFormVisible = this.isEdit = true;
-      this.getMenus(); // 得到所有的菜单
       this.getCheckMenusByRoleId(row.id); // 得到当前激活的菜单
     },
     handleNodeClick(data) {
       console.log(data);
     },
-    getMenus() {
+    getMenus() { // 得到所有菜单
       getMenus().then(res => {
         console.log('res', res);
         this.menusData = res.data.data;
@@ -128,6 +127,7 @@ export default {
     getCheckMenusByRoleId(id) {
       getMenusByRoleId(id).then(res => {
         this.defaultCheckKeys = res.data.data;
+        this.getMenus();
       })
     },
     handleDelete(index, row) {
@@ -160,11 +160,10 @@ export default {
       }
     },
     handleUpdateRole(formName) {
-      // console.log('menu', this.menusData);
-      // console.log('key', this.defaultCheckKeys);
-      // console.log('22',this.$refs.tree.getCheckedKeys());
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          // const checkChildMenus = this.$refs.tree.getCheckedKeys(); // 选中的儿子菜单
+          // const checkParentMenus = this.$refs.tree.getHalfCheckedKeys();
           const checkMenus = this.$refs.tree.getCheckedKeys();
           const data = {
             id: this.roleForm.id,
