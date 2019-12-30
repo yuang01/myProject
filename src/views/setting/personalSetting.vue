@@ -5,7 +5,7 @@
         <el-form-item label="用户头像" prop="avatar">
           <el-upload
             class="avatar-uploader"
-            action="http://192.168.1.166:3000/uploadfile"
+            :action="action"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -45,6 +45,7 @@ export default {
   name: 'PersonalSetting', // 个人设置页面
   data() {
     return {
+      action: process.env.VUE_APP_BASE_API + '/uploadfile',
       userForm: {
         name: '',
         password: '',
@@ -72,12 +73,6 @@ export default {
   },
   created() {
     this.getCurUser()
-    const encode = Base64.encode('dankogai');
-    console.log('encode', encode);
-    const decode = Base64.decode('ZGFua29nYWk=');
-    console.log('decode', decode);
-    const aa = new Buffer('dankogai').toString('base64');
-    console.log('aa', aa);
   },
   methods: {
     // 获取用户

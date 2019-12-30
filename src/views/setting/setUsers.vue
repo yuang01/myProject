@@ -110,7 +110,7 @@
         <el-form-item label="用户头像" prop="avatar">
           <el-upload
             class="avatar-uploader"
-            action="http://192.168.1.166:3000/uploadfile"
+            :action="action"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -150,6 +150,7 @@ export default {
   name: 'SetUsers',
   data() {
     return {
+      action: process.env.VUE_APP_BASE_API + '/uploadfile',
       tableData: [],
       pagination: {
         page: 1,

@@ -54,15 +54,18 @@
           <el-input v-model="roleForm.desc" />
         </el-form-item>
       </el-form>
-      <el-tree
-        :data="menusData"
-        show-checkbox
-        node-key="id"
-        :props="defaultProps"
-        ref="tree"
-        :default-checked-keys="defaultCheckKeys"
-        @check-change="handleNodeClick">
-      </el-tree>
+      <div class="ml-50">
+        <h3>编辑菜单权限</h3>
+        <el-tree
+          :data="menusData"
+          show-checkbox
+          node-key="id"
+          :props="defaultProps"
+          ref="tree"
+          :default-checked-keys="defaultCheckKeys"
+          @check-change="handleNodeClick">
+        </el-tree>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel()">取 消</el-button>
         <el-button type="primary" @click="handleUpdateorAddRole('roleForm')">确 定</el-button>
@@ -162,8 +165,6 @@ export default {
     handleUpdateRole(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // const checkChildMenus = this.$refs.tree.getCheckedKeys(); // 选中的儿子菜单
-          // const checkParentMenus = this.$refs.tree.getHalfCheckedKeys();
           const checkMenus = this.$refs.tree.getCheckedKeys();
           const data = {
             id: this.roleForm.id,
@@ -210,6 +211,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss">
+.ml-50 {
+  margin-left: 50px;
+}
 </style>
