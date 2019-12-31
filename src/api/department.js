@@ -8,3 +8,10 @@ export function getDepartments(params) {
   })
 }
 
+export function update(data) {
+  return request({
+    url: 'department/update',
+    method: 'post',
+    data,
+  })
+}

@@ -23,7 +23,7 @@
         align="center"
         label="所属部门">
         <template slot-scope="scope">
-          <span v-if="scope.row.department">{{ scope.row.department.desc }}</span>
+          <span v-if="scope.row.department">{{ scope.row.department.name }}</span>
           <span v-else>--</span>
         </template>
       </el-table-column>
