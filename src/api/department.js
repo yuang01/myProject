@@ -15,3 +15,11 @@ export function update(data) {
     data,
   })
 }
+
+export function create(data) {
+  return request({
+    url: 'department/create',
+    method: 'post',
+    data,
+  })
+}
