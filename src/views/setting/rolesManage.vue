@@ -187,7 +187,14 @@ export default {
     handleAddRole(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          createRole(this.roleForm).then(res => {
+          const checkMenus = this.$refs.tree.getCheckedKeys();
+          const data = {
+            id: this.roleForm.id,
+            name: this.roleForm.name,
+            desc: this.roleForm.desc,
+            checkMenus
+          }
+          createRole(data).then(res => {
             if (res.data.code === 200) {
               this.$message.success(res.data.message);
               this.dialogRoleEditorAddFormVisible = false;
@@ -204,6 +211,7 @@ export default {
     },
     addRole() {
       this.isEdit = false;
+      this.getMenus();
       Object.assign(this.roleForm, this.$options.data().roleForm) // 数据恢复魏data中的初始值
       this.dialogRoleEditorAddFormVisible = true;
     }
