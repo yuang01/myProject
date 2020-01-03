@@ -53,6 +53,17 @@
         <el-form-item label="描述" prop="desc">
           <el-input v-model="roleForm.desc" />
         </el-form-item>
+        <el-form-item label="所属部门" prop="departmentId">
+          <el-cascader
+            v-model="roleForm.departmentId"
+            :options="departmentsData"
+            :props="{
+              value: 'id',
+              label: 'name'
+            }"
+            change-on-select
+          ></el-cascader>
+        </el-form-item>
       </el-form>
       <div class="ml-50">
         <h3>编辑菜单权限</h3>
@@ -77,14 +88,17 @@
 <script>
 import { getMenus, getMenusByRoleId } from '@/api/menus';
 import { getRoles, updateRole, createRole, destroyRole } from '@/api/rolesManage';
+import { getDepartments } from "@/api/department";
 export default {
   name: 'rolesManage',
   data() {
     return {
       tableData: [],
+      departmentsData:[],
       roleForm: {
         name: '',
-        desc: ''
+        desc: '',
+        departmentId: [0],
       },
       rules: {
         name: [
@@ -106,17 +120,54 @@ export default {
   },
   created() {
     this.getRoles();
+    this.getDepartments();
   },
   methods: {
+    async getDepartments() {
+      const result = await getDepartments();
+      this.departmentsData = result.data.data;
+    },
     async getRoles() {
       const result = await getRoles();
       this.tableData = result.data.data;
     },
     handleEdit(index, row) {
       const role = Object.assign({}, row);
+      console.log('row', row);
       this.roleForm = role;
+      this.roleForm.departmentId = this.getTreeDeepArr(
+        role.departmentId,
+        this.departmentsData
+      );
       this.dialogRoleEditorAddFormVisible = this.isEdit = true;
       this.getCheckMenusByRoleId(row.id); // 得到当前激活的菜单
+    },
+    // 向上得到父节点, 传入最小的子节点，和数组
+    getTreeDeepArr(key, treeData) {
+      let arr = []; // 在递归时操作的数组
+      let returnArr = []; // 存放结果的数组
+      let depth = 0; // 定义全局层级
+      // 定义递归函数
+      function childrenEach(childrenData, depthN) {
+        for (var j = 0; j < childrenData.length; j++) {
+          depth = depthN; // 将执行的层级赋值 到 全局层级
+
+          arr[depthN] = childrenData[j].id;
+
+          if (childrenData[j].id == key) {
+            // returnArr = arr; // 原写法不行, 因此赋值存在指针关系
+            returnArr = arr.slice(0, depthN + 1); //将目前匹配的数组，截断并保存到结果数组，
+            break;
+          } else {
+            if (childrenData[j].children) {
+              depth++;
+              childrenEach(childrenData[j].children, depth);
+            }
+          }
+        }
+        return returnArr;
+      }
+      return childrenEach(treeData, depth);
     },
     handleNodeClick(data) {
       console.log(data);
@@ -166,11 +217,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const checkMenus = this.$refs.tree.getCheckedKeys();
+          const departmentId = this.roleForm.departmentId[this.roleForm.departmentId.length - 1];
           const data = {
             id: this.roleForm.id,
             name: this.roleForm.name,
             desc: this.roleForm.desc,
-            checkMenus
+            checkMenus,
+            departmentId
           }
           updateRole(data).then(res => {
             if (res.data.code === 200) {
@@ -188,11 +241,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const checkMenus = this.$refs.tree.getCheckedKeys();
+          const departmentId = this.roleForm.departmentId[this.roleForm.departmentId.length - 1];
           const data = {
             id: this.roleForm.id,
             name: this.roleForm.name,
             desc: this.roleForm.desc,
-            checkMenus
+            checkMenus,
+            departmentId
           }
           createRole(data).then(res => {
             if (res.data.code === 200) {
