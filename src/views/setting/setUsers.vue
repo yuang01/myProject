@@ -131,6 +131,11 @@
             <el-radio :label="1">女</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="所属角色">
+        <el-select v-model="userForm.roleId" placeholder="请选择所属角色">
+          <el-option v-for="(item, index) in roleList" :key="index" :label="item.desc" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
         <el-form-item label="用户简介" prop="introduction">
           <el-input v-model="userForm.introduction" type="textarea" :rows="4" />
         </el-form-item>
@@ -146,6 +151,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { allUser, destroy, updateUser, createUser } from '@/api/user'
+import { getRoles } from '@/api/rolesManage'
 export default {
   name: 'SetUsers',
   data() {
@@ -167,8 +173,10 @@ export default {
         password: '',
         introduction: '',
         avatar: '',
-        sex: ''
+        sex: '',
+        roleId: ''
       },
+      roleList: [],
       rules: {
         name: [
           { required: true, message: '请输入用户名称', trigger: 'blur' },
@@ -192,9 +200,17 @@ export default {
     ])
   },
   created() {
-    this.getAllUser()
+    this.getAllUser();
+    this.getRoles();
   },
   methods: {
+    getRoles() {
+      getRoles().then(res => {
+        if (res.data.code === 200) {
+          this.roleList = res.data.data;
+        }
+      })
+    },
     handleCancel() {
       this.dialogUserEditoorAddFormVisible = false
     },
@@ -205,7 +221,9 @@ export default {
     },
     handleEdit(index, row) {
       const user = Object.assign({}, row)
-      this.userForm = user
+      const { id, name, password, introduction, avatar, sex } = user;
+      const roleId = user.roles[0].id
+      this.userForm = { id, name, password, introduction, avatar, sex, roleId };
       this.dialogUserEditoorAddFormVisible = this.isEdit = true
     },
     // 回显头像
