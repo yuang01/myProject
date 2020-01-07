@@ -438,6 +438,7 @@ export const asyncRoutes = [
 
 export const componentMap = 
   {
+    // 后端返回的component和这个进行映射比对，找到相应的页面
     Layout,
     exportExcel: () => import('@/views/excel/export-excel'),
     selectExcel: () => import('@/views/excel/select-excel'),
@@ -445,6 +446,8 @@ export const componentMap =
     setUsers: () => import('@/views/setting/setUsers'),
     rolesManage: () => import('@/views/setting/rolesManage'),
     departmentManage: () => import('@/views/setting/departmentManage'),
+    menusManage: () => import('@/views/setting/menusManage'),
+    undefined: () => import('@/views/building/index'),
   }
 
 const createRouter = () => new Router({

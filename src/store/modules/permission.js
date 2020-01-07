@@ -36,7 +36,7 @@ export function filterAsyncRoutes(routes, roles) {
 // 将后端返回的conponent替换掉，根据映射
 export function filterServiceTreeMenus(data) {
   data.forEach(el => {
-    el.component = componentMap[el.component];
+    el.component = componentMap[el.component] ? componentMap[el.component] : () => import('@/views/building/index');
     if (el.children) {
       filterServiceTreeMenus(el.children);
     }

@@ -55,6 +55,7 @@
         </el-form-item>
         <el-form-item label="所属部门" prop="departmentId">
           <el-cascader
+            style="width:100%;"
             v-model="roleForm.departmentId"
             :options="departmentsData"
             :props="{
@@ -181,6 +182,7 @@ export default {
     getCheckMenusByRoleId(id) {
       getMenusByRoleId(id).then(res => {
         this.defaultCheckKeys = res.data.data;
+        console.log('check', this.defaultCheckKeys);
         this.getMenus();
       })
     },
