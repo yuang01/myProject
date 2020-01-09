@@ -60,7 +60,7 @@ const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       const params = {
-        name: roles[0]
+        name: JSON.stringify(roles)
       };
       let menus = [];
       getMenusByRoleName(params).then(res => {

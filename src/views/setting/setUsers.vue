@@ -132,7 +132,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="所属角色">
-        <el-select v-model="userForm.roleId" placeholder="请选择所属角色">
+        <el-select v-model="userForm.roles" multiple placeholder="请选择所属角色">
           <el-option v-for="(item, index) in roleList" :key="index" :label="item.desc" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
@@ -174,7 +174,7 @@ export default {
         introduction: '',
         avatar: '',
         sex: '',
-        roleId: ''
+        roles: []
       },
       roleList: [],
       rules: {
@@ -222,8 +222,8 @@ export default {
     handleEdit(index, row) {
       const user = Object.assign({}, row)
       const { id, name, password, introduction, avatar, sex } = user;
-      const roleId = user.roles[0].id
-      this.userForm = { id, name, password, introduction, avatar, sex, roleId };
+      const roles = user.roles.map(el => Number(el.id));
+      this.userForm = { id, name, password, introduction, avatar, sex, roles };
       this.dialogUserEditoorAddFormVisible = this.isEdit = true
     },
     // 回显头像

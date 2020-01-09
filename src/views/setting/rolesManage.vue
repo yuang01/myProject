@@ -31,7 +31,6 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            v-permission="['admin']"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
           <el-button
