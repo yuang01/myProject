@@ -25,7 +25,7 @@
         <el-button @click="resetForm('formInline')">重置</el-button>
       </el-form-item>
     </el-form>
-    <el-button type="primary" class="mb-10" @click="addUser">新增用户</el-button>
+    <el-button type="primary" class="mb-10" @click="addUser" v-permission="['userManage/add']">新增用户</el-button>
     <el-table
       :data="tableData"
       style="width: 100%"
@@ -84,10 +84,12 @@
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button
+            v-permission="['userManage/edit']"
             size="mini"
             @click="handleEdit(scope.$index, scope.row)"
           >编辑</el-button>
           <el-button
+             v-permission="['userManage/delete']"
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
