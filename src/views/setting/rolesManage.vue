@@ -268,6 +268,7 @@ export default {
       this.isEdit = false;
       this.getMenus();
       Object.assign(this.roleForm, this.$options.data().roleForm) // 数据恢复魏data中的初始值
+      this.defaultCheckKeys = [];
       this.dialogRoleEditorAddFormVisible = true;
     }
   }
