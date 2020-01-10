@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <el-button type="primary" class="mb-10" @click="addRole">新增角色</el-button>
+    <el-button type="primary" class="mb-10" @click="addRole" v-permission="['rolesManage/add']">新增角色</el-button>
     <el-table
       :data="tableData"
       style="width: 100%">
@@ -36,7 +36,6 @@
           <el-button
             size="mini"
             type="danger"
-            v-permission="['admin']"
             :disabled="scope.row.name.includes('admin')"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
