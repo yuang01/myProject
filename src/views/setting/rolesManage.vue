@@ -63,19 +63,18 @@
             change-on-select
           ></el-cascader>
         </el-form-item>
+        <el-form-item label="菜单权限">
+          <el-tree
+            :data="menusData"
+            show-checkbox
+            node-key="id"
+            :props="defaultProps"
+            ref="tree"
+            :default-checked-keys="defaultCheckKeys"
+            @check-change="handleNodeClick">
+          </el-tree>
+        </el-form-item>
       </el-form>
-      <div class="ml-50">
-        <h3>编辑菜单权限</h3>
-        <el-tree
-          :data="menusData"
-          show-checkbox
-          node-key="id"
-          :props="defaultProps"
-          ref="tree"
-          :default-checked-keys="defaultCheckKeys"
-          @check-change="handleNodeClick">
-        </el-tree>
-      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel()">取 消</el-button>
         <el-button type="primary" @click="handleUpdateorAddRole('roleForm')">确 定</el-button>
@@ -132,7 +131,6 @@ export default {
     },
     handleEdit(index, row) {
       const role = Object.assign({}, row);
-      console.log('row', row);
       this.roleForm = role;
       this.roleForm.departmentId = this.getTreeDeepArr(
         role.departmentId,
@@ -173,14 +171,12 @@ export default {
     },
     getMenus() { // 得到所有菜单
       getMenus().then(res => {
-        console.log('res', res);
         this.menusData = res.data.data;
       })
     },
     getCheckMenusByRoleId(id) {
       getMenusByRoleId(id).then(res => {
         this.defaultCheckKeys = res.data.data;
-        console.log('check', this.defaultCheckKeys);
         this.getMenus();
       })
     },

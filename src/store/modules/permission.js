@@ -70,6 +70,7 @@ const actions = {
         commit('SET_ROUTES', menus)
         resolve(menus)
       })
+      // 注释部分为原先不用后端请求的route规则
       // let accessedRoutes
       // if (roles.includes('admin')) {
       //   accessedRoutes = asyncRoutes || []
