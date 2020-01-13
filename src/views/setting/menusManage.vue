@@ -10,9 +10,14 @@
           {{scope.row.isMenu === 1 ? '是' : '否'}}
         </template>
       </el-table-column>
-      <el-table-column label="图标">
+      <el-table-column label="是否隐藏">
         <template slot-scope="scope">
-          {{scope.row.meta.icon}}
+          {{scope.row.hidden === 1 ? '是' : '否'}}
+        </template>
+      </el-table-column>
+      <el-table-column label="排序">
+        <template slot-scope="scope">
+          {{scope.row.index}}
         </template>
       </el-table-column>
       <el-table-column label="操作">
