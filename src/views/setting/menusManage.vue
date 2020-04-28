@@ -215,7 +215,7 @@ export default {
       return childrenEach(treeData, depth);
     },
     handleDeleteBtn(index, row) {
-      this.$confirm('是否删除该菜单?', '提示', {
+      this.$confirm(`是否删除${row.label}菜单?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
