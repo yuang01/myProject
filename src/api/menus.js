@@ -22,10 +22,35 @@ export function getMenusByRoleName(params) {
     params
   })
 }
+
 export function addMenu(data) {
   return request({
     url: '/menu/addMenu',
     method: 'post',
     data
+  })
+}
+
+export function getMenuById(params) {
+  return request({
+    url: '/menu/getMenuById',
+    method: 'get',
+    params
+  })
+}
+
+export function updateMenu(data) {
+  return request({
+    url: '/menu/updateMenu',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteMenu(params) {
+  return request({
+    url: '/menu/deleteMenu',
+    method: 'get',
+    params
   })
 }

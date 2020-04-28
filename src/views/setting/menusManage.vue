@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { getMenus, addMenu } from '@/api/menus';
+import { getMenus, addMenu, getMenuById, updateMenu, deleteMenu } from '@/api/menus';
 export default {
   name: 'menusManage', // 菜单管理界面
   data() {
@@ -129,10 +129,11 @@ export default {
     },
     // 新增菜单
     showAddMenu() {
+      Object.assign(this.menuForm, this.$options.data().menuForm) // 数据恢复魏data中的初始值
       this.dialogMenuEditorAddFormVisible = true;
     },
     handleCancel() {
-
+      this.dialogMenuEditorAddFormVisible = false;
     },
     handleUpdateorAddMenu(formName) {
       this.$refs[formName].validate((valid) => {
@@ -160,13 +161,79 @@ export default {
       })
     },
     handleEdit() {
-
+      let data = { ...this.menuForm };
+      const lastIndex = data.parentId.length - 1;
+      data.parentId = data.parentId[lastIndex];
+      updateMenu(data).then(res => {
+        if (res.data.code === 200) {
+          this.$message.success(res.data.message);
+          this.dialogMenuEditorAddFormVisible = false;
+          this.getMenus();
+        } else {
+          this.$message.error(res.data.message);
+        }
+      })
     },
     handleEditBtn(index, row) {
+      const params = {
+        id: row.id
+      };
+      getMenuById(params).then(res => {
+        this.isEdit = this.dialogMenuEditorAddFormVisible = true;
+        let menu = res.data.data;
+        menu.parentId = this.getTreeDeepArr(
+          menu.parentId,
+          this.tableData
+        );
+        this.menuForm = menu;
+      })
+    },
+    getTreeDeepArr(key, treeData) {
+      let arr = []; // 在递归时操作的数组
+      let returnArr = []; // 存放结果的数组
+      let depth = 0; // 定义全局层级
+      // 定义递归函数
+      function childrenEach(childrenData, depthN) {
+        for (var j = 0; j < childrenData.length; j++) {
+          depth = depthN; // 将执行的层级赋值 到 全局层级
 
+          arr[depthN] = childrenData[j].id;
+
+          if (childrenData[j].id == key) {
+            // returnArr = arr; // 原写法不行, 因此赋值存在指针关系
+            returnArr = arr.slice(0, depthN + 1); //将目前匹配的数组，截断并保存到结果数组，
+            break;
+          } else {
+            if (childrenData[j].children) {
+              depth++;
+              childrenEach(childrenData[j].children, depth);
+            }
+          }
+        }
+        return returnArr;
+      }
+      return childrenEach(treeData, depth);
     },
     handleDeleteBtn(index, row) {
-
+      this.$confirm('是否删除该菜单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteMenu({id: row.id}).then(res => {
+          if (res.data.code === 200) {
+            this.$message.success(res.data.message);
+            this.getMenus();
+          } else {
+            this.$message.error('删除失败');
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }

@@ -80,7 +80,6 @@ export default {
     async getDepartments() {
       const result = await getDepartments();
       this.tableData = result.data.data;
-      console.log("res", result.data.data);
     },
     // 编辑
     handleEditBtn(index, row) {
