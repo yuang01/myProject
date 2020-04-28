@@ -238,7 +238,8 @@ export default {
   }
 }
 </script>
-
-<style>
-
+<style lang="scss" scoped>
+.mb-10 {
+  margin-bottom: 15px;
+}
 </style>
