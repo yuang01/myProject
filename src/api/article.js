@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function fetchArticle(id) {
   return request({
-    url: '/article/detail',
+    url: '/article/getArticleById',
     method: 'get',
     params: { id }
   })
@@ -37,5 +37,13 @@ export function updateArticle(data) {
     url: '/article/update',
     method: 'post',
     data
+  })
+}
+
+export function deleteArticle(id) {
+  return request({
+    url: '/article/delete',
+    method: 'get',
+    params: { id }
   })
 }

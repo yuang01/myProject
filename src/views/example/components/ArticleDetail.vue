@@ -16,33 +16,34 @@
 
       <div class="createPost-main-container">
         <el-row>
-          <Warning />
+          <!-- <Warning /> -->
 
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="title">
               <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
-                Title
+                标题
               </MDinput>
             </el-form-item>
 
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="60px" label="Author:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
+                  <el-form-item label-width="60px" label="作者:" class="postInfo-container-item">
+                    <el-input v-model="postForm.author" />
+                    <!-- <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
-                    </el-select>
+                    </el-select> -->
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
-                  <el-form-item label-width="120px" label="Publish Time:" class="postInfo-container-item">
-                    <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
+                  <el-form-item label-width="120px" label="发布时间:" class="postInfo-container-item">
+                    <el-date-picker v-model="postForm.display_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6">
-                  <el-form-item label-width="90px" label="Importance:" class="postInfo-container-item">
+                  <el-form-item label-width="90px" label="重要性:" class="postInfo-container-item">
                     <el-rate
                       v-model="postForm.importance"
                       :max="3"
@@ -50,6 +51,7 @@
                       :low-threshold="1"
                       :high-threshold="3"
                       style="display:inline-block"
+                      placeholder="请选择发布时间"
                     />
                   </el-form-item>
                 </el-col>
@@ -58,7 +60,7 @@
           </el-col>
         </el-row>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="70px" label="Summary:">
+        <el-form-item style="margin-bottom: 40px;" label-width="70px" label="摘要:">
           <el-input v-model="postForm.content_short" :rows="1" type="textarea" class="article-textarea" autosize placeholder="Please enter the content" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
@@ -81,7 +83,7 @@ import Upload from '@/components/Upload/SingleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
-import { fetchArticle } from '@/api/article'
+import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { searchUser } from '@/api/remote-search'
 import Warning from './Warning'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
@@ -141,7 +143,7 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        image_uri: [{ validator: validateRequire }],
+        // image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
@@ -168,7 +170,7 @@ export default {
   },
   created() {
     if (this.isEdit) {
-      const id = this.$route.params && this.$route.params.id
+      const id = this.$route.query && this.$route.query.id
       this.fetchData(id)
     }
 
@@ -180,14 +182,10 @@ export default {
   methods: {
     fetchData(id) {
       fetchArticle(id).then(response => {
-        this.postForm = response.data
-
-        // just for test
-        this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.content_short += `   Article Id:${this.postForm.id}`
-
+        this.postForm = response.data.data;
+        this.postForm.display_time = this.postForm.createdAt;
         // set tagsview title
-        this.setTagsViewTitle()
+        // this.setTagsViewTitle()
 
         // set page title
         this.setPageTitle()
@@ -205,16 +203,37 @@ export default {
       document.title = `${title} - ${this.postForm.id}`
     },
     submitForm() {
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '发布文章成功',
-            type: 'success',
-            duration: 2000
+          let data = { ...this.postForm };
+          data.createdAt = data.display_time;
+          !this.isEdit && createArticle(data).then(res => {
+            if (res.data.code === 200) {
+              this.$notify({
+                title: '成功',
+                message: '发布文章成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$message.error(res.data.message);
+            }
           })
+
+          this.isEdit && updateArticle(data).then(res => {
+            if (res.data.code === 200) {
+              this.$notify({
+                title: '成功',
+                message: '发布更新成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$message.error(res.data.message);
+            }
+          })
+
           this.postForm.status = 'published'
           this.loading = false
         } else {

@@ -107,6 +107,7 @@ export const constantRoutes = [
       }
     ]
   },
+  componentsRouter,
   {
     path: '/profile',
     component: Layout,
@@ -447,6 +448,9 @@ export const componentMap =
     rolesManage: () => import('@/views/setting/rolesManage'),
     departmentManage: () => import('@/views/setting/departmentManage'),
     menusManage: () => import('@/views/setting/menusManage'),
+    createArticle: () => import('@/views/example/create'),
+    articleList: () => import('@/views/example/list'),
+    editArticle: () => import('@/views/example/edit'),
     undefined: () => import('@/views/building/index'),
   }
 
