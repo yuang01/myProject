@@ -13,7 +13,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="编辑部门" :visible.sync="dialogEditoorAddFormVisible">
+    <el-dialog title="编辑部门" :visible.sync="dialogEditoorAddFormVisible" @close="handleCancel()" :close-on-click-modal="false">
       <el-form
         ref="departmentForm"
         :model="departmentForm"
@@ -90,6 +90,35 @@ export default {
         department.parentId,
         this.tableData
       );
+      this.disabledSelf(department.id, this.tableData);
+    },
+    // 编辑的时候，上级部门不能选择自己
+    disabledSelf(id, treeData) {
+      function childrenEach(childrenData) {
+        for (var j = 0; j < childrenData.length; j++) {
+          if (id === childrenData[j].id) {
+            childrenData[j].disabled = true;
+            return;
+          } else if (childrenData[j].children) {
+            childrenEach(childrenData[j].children);
+          }
+        }
+      }
+      childrenEach(treeData);
+    },
+    // 还原data，将禁用去掉
+    deleteDisabled(treeData) {
+      function childrenEach(childrenData) {
+        for (var j = 0; j < childrenData.length; j++) {
+          if (childrenData[j].disabled) {
+            delete childrenData[j].disabled;
+            return; // 因为只有一有disabled，所以找到一个就可以退出函数了
+          } else if (childrenData[j].children) {
+            childrenEach(childrenData[j].children);
+          }
+        }
+      }
+      childrenEach(treeData);
     },
     getTreeDeepArr(key, treeData) {
       let arr = []; // 在递归时操作的数组
@@ -164,6 +193,7 @@ export default {
     // 取消
     handleCancel() {
       this.dialogEditoorAddFormVisible = false;
+      this.isEdit && this.deleteDisabled(this.tableData);
     }
   }
 };

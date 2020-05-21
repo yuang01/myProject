@@ -29,7 +29,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="isEdit ? '编辑菜单' : '新增菜单'" :visible.sync="dialogMenuEditorAddFormVisible" :close-on-click-modal="false">
+    <el-dialog :title="isEdit ? '编辑菜单' : '新增菜单'" :visible.sync="dialogMenuEditorAddFormVisible" @close="handleCancel()" :close-on-click-modal="false">
       <el-form ref="menuForm" :model="menuForm" :rules="rules" label-width="100px" class="demo-menuForm">
         <el-form-item label="名称" prop="title">
           <el-input v-model="menuForm.title" placeholder="例如：用户管理"/>
@@ -134,6 +134,7 @@ export default {
     },
     handleCancel() {
       this.dialogMenuEditorAddFormVisible = false;
+      this.isEdit && this.deleteDisabled(this.tableData);
     },
     handleUpdateorAddMenu(formName) {
       this.$refs[formName].validate((valid) => {
@@ -186,7 +187,36 @@ export default {
           this.tableData
         );
         this.menuForm = menu;
+        this.disabledSelf(row.id, this.tableData);
       })
+    },
+    // 编辑的时候，上级菜单不能选择自己
+    disabledSelf(id, treeData) {
+      function childrenEach(childrenData) {
+        for (var j = 0; j < childrenData.length; j++) {
+          if (id === childrenData[j].id) {
+            childrenData[j].disabled = true;
+            return;
+          } else if (childrenData[j].children) {
+            childrenEach(childrenData[j].children);
+          }
+        }
+      }
+      childrenEach(treeData);
+    },
+    // 还原data，将禁用去掉
+    deleteDisabled(treeData) {
+      function childrenEach(childrenData) {
+        for (var j = 0; j < childrenData.length; j++) {
+          if (childrenData[j].disabled) {
+            delete childrenData[j].disabled;
+            return; // 因为只有一有disabled，所以找到一个就可以退出函数了
+          } else if (childrenData[j].children) {
+            childrenEach(childrenData[j].children);
+          }
+        }
+      }
+      childrenEach(treeData);
     },
     getTreeDeepArr(key, treeData) {
       let arr = []; // 在递归时操作的数组
